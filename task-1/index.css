@@ -13,11 +13,11 @@ button{
 }
 .page{
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-    font-size: 15px;
+    /* font-size: 15px; */
     color: black;
-    height: 100vh;
-    width: 100vw;
-    padding: 250px;
+    /* height: 100vh;
+    width: 100vw; */
+    padding: 100px;
    
 }
 
@@ -32,6 +32,7 @@ span{
     margin-right: 30px;
     padding:13px;
     margin-right: auto;
+    font-size: 2vw;
 }
 
 .book{
@@ -66,13 +67,13 @@ span{
 }
 .sec-1{
     float: right;
-    width: 300px;
-    height: 300px;
+    width: 30%;
+    height: 30%;
     margin-left: 200px;
 }
 
 h2{
-    font-size: 50px;
+    font-size: 15px;
     
 }
 em{
