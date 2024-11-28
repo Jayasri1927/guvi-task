@@ -1,0 +1,80 @@
+CREATE DATABASE E_commerce;
+
+CREATE TABLE Orders (
+  orders_id INT AUTO_INCREMENT PRIMARY KEY,
+  order_date DATE,
+  total_amount DECIMAL(10,2)
+ );
+ 
+ INSERT INTO Orders (order_date, total_amount)
+ VALUES ('2024-04-27', 3000),
+ ('2024-08-19', 2000),
+ ('2023-7-15', 10000),
+ ('2024-10-19', 5000),
+ ('2023-12-26', 1500),
+ ('2024-08-30', 2000);
+
+CREATE TABLE Products (
+  product_id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(500),
+  price DECIMAL(10,2),
+  description VARCHAR(500)
+);
+
+INSERT INTO Products (name, price, description)
+VALUES ("Product-A", 3000, "It will make ur skin clear"),
+("Product-A", 2000, "Fruits gives a good fat"),
+("Product-C", 10000, "To make ur home decorative"),
+("Product-C", 5000, "To make u elegant"),
+("Product-A", 1500, "Make ur Eyesight clear"),
+("Product-C", 2000, "Looks Decorative");
+
+/*create new colum*/
+ALTER TABLE Products
+ADD discount INT;
+
+
+CREATE TABLE Customers(
+  customer_id INT AUTO_INCREMENT PRIMARY KEY,
+  orders_id INT,
+  product_id INT,
+  name VARCHAR(200),
+  email VARCHAR(250),
+  address VARCHAR(500),
+  FOREIGN KEY (orders_id) REFERENCES Orders (orders_id),
+  FOREIGN KEY (product_id) REFERENCES Products (product_id)
+);
+
+INSERT INTO Customers (customer_id, orders_id, product_id, name, email, address)
+VALUES (01, 01, 01, 'JOHN', 'john19@gmail.com', 'Chennai'),
+ (02, 02, 02, 'JAGAN', 'jagan27@gmail.com', 'Cuddalore'),
+  (03, 03, 03, 'RAJSRI', 'sri1927@gmail.com', 'Bangalore'),
+   (04, 04, 04, 'VIJAY', 'vijay05@gmail.com', 'Sivagangai'),
+    (05, 05, 05, 'GANESH', 'ganesh96@gmail.com', 'Hosur'),
+     (06, 06, 06, 'RAJA', 'raja2345@gmail.com', 'Coimbatore');
+     
+ UPDATE Products
+ SET price = 45
+ WHERE name = 'Product-C'
+
+/*Retrieve the top 3 products with the highest price.
+
+SELECT price
+FROM Products
+ORDER BY price DESC
+LIMIT 3;*/
+
+
+/*Join the orders and customers tables to retrieve the customer's name and order date for each order. 
+
+SELECT Customers.name As Name, Orders.order_date As Date
+FROM Customers
+INNER JOIN Orders ON Customers.orders_id = Orders.orders_id*/
+
+
+/*Get Product A details.
+
+SELECT * FROM Products
+WHERE name = "Product-A"*/
+     
+     
