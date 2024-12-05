@@ -13,7 +13,7 @@ app.use('/', routes);
 
 connectDB();
 
-const PORT = 1927;
+const PORT = 3000;
 app.listen(PORT, () => {
     console.log(`server is running on port ${PORT}`);
 });
