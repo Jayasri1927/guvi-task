@@ -22,7 +22,7 @@ router.post("/app", async (req,res) => {
 
 //get all receipe 
 
-router.get('/app', async (req,res) => {
+router.get('/', async (req,res) => {
    try {
     const receipes = await Receipes.find({});
     res.send(receipes);
