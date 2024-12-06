@@ -4,7 +4,6 @@ const receipeSchema = new mongoose.Schema({
     receipesName: {
         id: Number,
         name:String,
-        ingredients:String,
        
     },
     difficulty: {
