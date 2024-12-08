@@ -9,7 +9,7 @@ const app = express();
 
 app.use(bodyParser.json());
 
-app.use("/api/users", authRoutes);
+app.use("/", authRoutes);
 
 connectDB();
 
