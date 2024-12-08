@@ -11,7 +11,7 @@ const registerUser = async (req, res) => {
         if(existingUser) {
             return res.status(400).json({ error: "User already exists" });
         }
-        const user = await User.create({ username, email, password });
+        const user = await User.read({ username, email, password });
         res.status(201).json(user);
     } catch (error) {
         res.status(500).json({ error : "Internal server error"});
