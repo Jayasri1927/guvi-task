@@ -53,6 +53,17 @@ const getuserInfo = async (req, res) => {
     }
 };
 
+router.get('/', async (req,res) => {
+    try {
+     const user = await User.find({});
+     res.send(user);
+    } catch (error) {
+     console.error(error);
+     res.status(500).send(error);
+    }
+ });
+
+ 
 module.exports = {
     registerUser,
     loginUser,
