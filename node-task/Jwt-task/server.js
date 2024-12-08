@@ -11,6 +11,10 @@ app.use(bodyParser.json());
 
 app.use("/", authRoutes);
 
+app.get("/:universalURL", (req, res) => {
+    res.send("404 URL NOT FOUND");
+});
+
 connectDB();
 
 const PORT = process.env.PORT || 3000;
