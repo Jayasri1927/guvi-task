@@ -1,13 +1,21 @@
 const express = require("express");
 const nodemailer = require("nodemailer");
+const bodyParser=require("body-parser");
 const cors = require("cors");
 const app = express();
 const port = 3000;
 require("dotenv").config();
 
 app.use(cors());
-app.use(express.json({ limit: "25mb"}));
-app.use(express.urlencoded({ limit: "25mb"}));
+// app.use(express.json({ limit: "25mb"}));
+// app.use(express.urlencoded({ limit: "25mb"}));
+
+// app.use(bodyParser.json()); // to support JSON-encoded bodies
+// app.use(bodyParser.urlencoded())
+
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.json());
+
 app.use((req,res,next) => {
     res.setHeader("Access-Control-Allow-Origin", "*");
     next();
