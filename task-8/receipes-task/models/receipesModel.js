@@ -2,8 +2,7 @@ const mongoose = require("mongoose");
 
 const receipeSchema = new mongoose.Schema({
     receipesName: {
-        id: Number,
-        name:String,
+        type:String,
        
     },
     difficulty: {
