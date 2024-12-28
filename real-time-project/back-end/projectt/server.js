@@ -3,6 +3,7 @@ const express = require("express");
 const axios = require("axios");
 const cors = require("cors");
 const app = express();
+const connectDB= require("./config/dbConfig");
 
 // CORS configuration
 app.use(cors({
@@ -11,10 +12,15 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
+connectDB();
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 const API_KEY = process.env.API_KEY;
+
+
+
 
 // Helper function for API requests
 async function makeApiRequest(url) {
@@ -35,6 +41,7 @@ async function makeApiRequest(url) {
       error: error.response ? error.response.data : error.message,
     };
   }
+  
 }
 
 app.get("/", async (req, res) => {
