@@ -58,7 +58,7 @@ const User = mongoose.model('User', UserSchema);
 
 // Routes
 // Movie routes
-app.get('/movies', async (req, res) => {
+app.get('/', async (req, res) => {
   try {
     const movies = await Movie.find();
     res.json(movies);
