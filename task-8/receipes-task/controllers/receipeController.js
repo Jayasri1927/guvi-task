@@ -1,17 +1,17 @@
 const express = require("express");
-const Receipes = require("../models/receipesModel");
+const Recipes = require("../models/receipesModel");
 
 const router = express.Router();
 
 //create a new receipes
 
 router.post("/app", async (req,res) => {
-    const {receipesName, difficulty, rating, reveiewCount, mealType} = req.body;
+    const {recipeName, difficulty, rating, reviewCount, mealType} = req.body;
 
     try {
-       const receipes = new Receipes ({receipesName, difficulty, rating, reveiewCount, mealType});
-       await receipes.save();
-       res.send(receipes);
+       const recipes = new Recipes ({recipeName, difficulty, rating, reviewCount, mealType});
+       await recipes.save();
+       res.send(recipes);
     } catch (error) {
         console.log(error.message);
         res.status(500).json({ error: "Internal serve error"});
@@ -24,8 +24,8 @@ router.post("/app", async (req,res) => {
 
 router.get('/', async (req,res) => {
    try {
-    const receipes = await Receipes.find({});
-    res.send(receipes);
+    const recipes = await Recipes.find({});
+    res.send(recipes);
    } catch (error) {
     console.error(error);
     res.status(500).send(error);
@@ -35,12 +35,12 @@ router.get('/', async (req,res) => {
 //get receipes by id
 
 router.get('/app/:id', (req,res) => {
-    const receipeId = parseInt(req.params.id);
-    const receipe = Receipes.find((receipe) => receipe.id === receipeId);
-    if (!receipe) {
+    const recipeId = parseInt(req.params.id);
+    const recipe = Recipes.find((recipe) => recipe.id === recipeId);
+    if (!recipe) {
         res.status(404).json({erroe: "Receipe not found"});
     }else {
-        res.json(receipe);
+        res.json(recipe);
     }
 });
 
@@ -49,11 +49,11 @@ router.get('/app/:id', (req,res) => {
 
 router.put('/app/:id', async (req,res) => {
     const {id} = req.params;
-    const {receipesName, difficulty, rating, reveiewCount, mealType} = req.body;
+    const {recipeName, difficulty, rating, reviewCount, mealType} = req.body;
 
     try {
-        const receipe = await Receipes.findByIdAndUpdate(id, {receipesName, difficulty, rating, reveiewCount, mealType}, {new: true});
-        res.send(receipe);
+        const recipe = await Recipes.findByIdAndUpdate(id, {recipeName, difficulty, rating, reviewCount, mealType}, {new: true});
+        res.send(recipe);
     } catch (error) {
         console.error(error);
         res.status(500).send (error);
@@ -67,8 +67,8 @@ router.delete('/app/:id', async (req,res) => {
     const {id} = req.params;
 
     try {
-        const receipe =  await Receipes.findByIdAndDelete(id);
-        res.send(receipe);
+        const recipe =  await Recipes.findByIdAndDelete(id);
+        res.send(recipe);
     } catch (error) {
         console.error (error);
         res.status(500).send(error);
