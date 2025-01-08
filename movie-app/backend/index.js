@@ -67,7 +67,7 @@ app.get('/movies', async (req, res) => {
   }
 });
 
-app.post('/', async (req, res) => {
+app.post('/movies', async (req, res) => {
   try {
     const { title, description, duration, genre, showTimes } = req.body;
     const movie = new Movie({ title, description, duration, genre, showTimes });
