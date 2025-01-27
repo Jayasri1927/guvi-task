@@ -12,6 +12,8 @@ app.use(cors());  // Enable CORS
 
 connectDB(); // Connect to MongoDB
 
+const PORT = process.env.PORT || 5000;
+
 // Fetch news from NewsAPI
 const fetchNews = async () => {
   const url = 'https://newsapi.org/v2/everything';
@@ -55,6 +57,6 @@ app.get('/news', async (req, res) => {
 });
 
 // Set up the server to listen on port 5000
-app.listen(5000, () => {
-  console.log('Server is running on http://localhost:5000');
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
