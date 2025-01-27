@@ -1,82 +1,60 @@
-require("dotenv").config();
-const express = require("express");
-const axios = require("axios");
-const cors = require("cors");
+// server.js
+const express = require('express');
+const axios = require('axios');
+const mongoose = require('mongoose');
+const News = require('./models/News');
+const connectDB = require('./config/dbConfig');
 const app = express();
-const connectDB= require("./config/dbConfig");
 
-// CORS configuration
-app.use(cors({
-  origin: '*', // Be cautious with this in production
-  methods: ['GET', 'POST', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
-
-connectDB();
-
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
-
-const API_KEY = process.env.API_KEY;
+const cors = require('cors');
+app.use(cors());  // Enable CORS
 
 
+connectDB(); // Connect to MongoDB
 
+// Fetch news from NewsAPI
+const fetchNews = async () => {
+  const url = 'https://newsapi.org/v2/everything';
+  const params = {
+    q: 'apple',  // Search term (for "apple" news)
+    from: '2025-01-26',  // Start date
+    to: '2025-01-26',  // End date
+    sortBy: 'popularity',
+    apiKey: '0aff392eeb2c499fb9bcdbde633c521b',  // API Key
+  };
 
-// Helper function for API requests
-async function makeApiRequest(url) {
   try {
-    const response = await axios.get(url);
-    return {
-      status: 200,
-      success: true,
-      message: "Successfully fetched the data",
-      data: response.data,
-    };
+    const response = await axios.get(url, { params });
+    const articles = response.data.articles.map((article) => ({
+      title: article.title,
+      description: article.description,
+      url: article.url,
+      source: article.source.name,
+      publishedAt: new Date(article.publishedAt),
+    }));
+
+    // Save articles to MongoDB
+    await News.insertMany(articles);
+    console.log('News saved to database!');
   } catch (error) {
-    console.error("API request error:", error.response ? error.response.data : error);
-    return {
-      status: 500,
-      success: false,
-      message: "Failed to fetch data from the API",
-      error: error.response ? error.response.data : error.message,
-    };
+    console.error('Error fetching news:', error);
   }
-  
-}
+};
 
-app.get("/", async (req, res) => {
-  let pageSize = parseInt(req.query.pageSize) || 80;
-  let page = parseInt(req.query.page) || 1;
-  let q = req.query.q || 'world'; // Default search query if none provided
+// Call fetchNews function once at server start
+fetchNews();
 
-  let url = `https://newsapi.org/v2/everything?q=${encodeURIComponent(q)}&page=${page}&pageSize=${pageSize}&apiKey=${process.env.API_KEY}`;
-  const result = await makeApiRequest(url);
-  res.status(result.status).json(result); 
-}); 
-
-app.options("/top-headlines",cors());
-app.get("/top-headlines", async (req, res) => {
-  let pageSize = parseInt(req.query.pageSize) || 80;
-  let page = parseInt(req.query.page) || 1;
-  let category = req.query.category || "general";
-
-  let url = `https://newsapi.org/v2/top-headlines?category=${category}&language=en&page=${page}&pageSize=${pageSize}&apiKey=${process.env.API_KEY}`;
-  const result = await makeApiRequest(url);
-  res.status(result.status).json(result);
+// Route to get news
+app.get('/news', async (req, res) => {
+  try {
+    const news = await News.find().sort({ publishedAt: -1 });
+    res.json(news);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch news from database' });
+  }
 });
 
-app.options("/country/:iso",cors());
-app.get("/country/:iso", async (req, res) => {
-  let pageSize = parseInt(req.query.pageSize) || 80;
-  let page = parseInt(req.query.page) || 1;
-  const country = req.params.iso;
-
-  let url = `https://newsapi.org/v2/top-headlines?country=${country}&apiKey=${process.env.API_KEY}&page=${page}&pageSize=${pageSize}`;
-  const result = await makeApiRequest(url);
-  res.status(result.status).json(result);
-});
-
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, function () {
-  console.log(`Server is running at port ${PORT}`);
+// Set up the server to listen on port 5000
+app.listen(5000, () => {
+  console.log('Server is running on http://localhost:5000');
 });

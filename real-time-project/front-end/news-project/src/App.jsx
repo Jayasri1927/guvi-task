@@ -1,30 +1,14 @@
-import { useState } from "react";
-import "./App.css";
-import Header from "./components/Header";
-import AllNews from "./components/AllNews";
-import Footer from "./components/Footer";
-import TopHeadlines from "./components/TopHeadlines";
+// src/App.js
+import React from 'react';
+import News from './components/News';
 
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import CountryNews from "./components/CountryNews";
 
-function App() {
-  const [count, setCount] = useState(0)
+const App = () => {
   return (
-    <div className="w-full">
-      <BrowserRouter>
-        <Header />
-        <Routes>
-          <Route path="/" element={<AllNews />} />
-          <Route path="/top-headlines/:category" element={<TopHeadlines />} />
-          <Route path="/country/:iso" element={<CountryNews />} />
-        </Routes>
-        {/* <Cards />   */}
-       <Footer />  
-      
-      </BrowserRouter>
+    <div>
+      <News />
     </div>
   );
-}
+};
 
 export default App;

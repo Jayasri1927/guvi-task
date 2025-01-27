@@ -1,12 +1,12 @@
-const mongoose = require("mongoose");
+// server/config.js
+require('dotenv').config();
 
-const connectDB = async () => {
-    try {
-        await mongoose.connect("mongodb+srv://jayasrig2002:fJo0IXJn6VdF4Kok@cluster0.rctd7.mongodb.net/receipes-task");
-        console.log("Database Connected");
-    } catch (error) {
-        console.log("Database connection failed");
-    }
+module.exports = {
+  jwtSecret: process.env.SECRET_KEY,
+  emailConfig: {
+    host: process.env.EMAIL_HOST,
+    port: process.env.EMAIL_PORT,
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
 };
-
-module.exports = connectDB;

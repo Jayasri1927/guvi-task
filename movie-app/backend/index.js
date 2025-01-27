@@ -1,138 +1,90 @@
-// movie_booking_system/server/index.js
-
 const express = require('express');
+const axios = require('axios');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const bcrypt = require('bcryptjs');
-require('dotenv').config();
+const dotenv = require('dotenv');
 
+dotenv.config();
 const app = express();
-const PORT = process.env.PORT || 5000;
 
 // Middleware
-app.use(cors());
 app.use(express.json());
+app.use(cors());
 
 // Connect to MongoDB
-// const mongoose = require("mongoose");
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log('Connected to MongoDB'))
+  .catch(err => console.log('Failed to connect to MongoDB', err));
 
-const connectDB = async () => {
-    try {
-        await mongoose.connect(process.env.MONGO_URI);
-       
-        console.log("Database Connected");
-    } catch (error) {
-        console.log("Database connection failed");
-    }
-};
-
-module.exports = connectDB;
-
-// Models
-const MovieSchema = new mongoose.Schema({
-  title: String,
-  description: String,
-  duration: String,
-  genre: String,
-  showTimes: [String],
-});
-
-const BookingSchema = new mongoose.Schema({
-  movieId: mongoose.Schema.Types.ObjectId,
-  userName: String,
-  email: String,
+// Movie model for bookings
+const bookingSchema = new mongoose.Schema({
+  movieId: String,
+  movieTitle: String,
   seats: Number,
-  bookingTime: Date,
-  movieName:String,
+  customerName: String,
+  bookingDate: { type: Date, default: Date.now },
 });
 
-const UserSchema = new mongoose.Schema({
-  name: String,
-  email: { type: String, unique: true },
-  password: String,
-});
+const Booking = mongoose.model('Booking', bookingSchema);
 
-const Movie = mongoose.model('Movie', MovieSchema);
-const Booking = mongoose.model('Booking', BookingSchema);
-const User = mongoose.model('User', UserSchema);
+// Movie API request to RapidAPI
+app.get('/api/movies', async (req, res) => {
+  const options = {
+    method: 'GET',
+    url: 'https://moviedatabase8.p.rapidapi.com/movie/popular',
+    headers: {
+      'x-rapidapi-key': process.env.RAPIDAPI_KEY,
+      'x-rapidapi-host': process.env.RAPIDAPI_HOST,
+    },
+  };
 
-// Routes
-// Movie routes
-app.get('/movies', async (req, res) => {
   try {
-    const movies = await Movie.find();
-    res.json(movies);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    const response = await axios.request(options);
+    res.json(response.data.results);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to fetch movies', error: error.message });
   }
 });
 
-app.post('/movies', async (req, res) => {
+// Movie details API request
+app.get('/api/movies/:id', async (req, res) => {
+  const { id } = req.params;
+  const options = {
+    method: 'GET',
+    url: `https://moviedatabase8.p.rapidapi.com/movie/${id}`,
+    headers: {
+      'x-rapidapi-key': process.env.RAPIDAPI_KEY,
+      'x-rapidapi-host': process.env.RAPIDAPI_HOST,
+    },
+  };
+
   try {
-    const { title, description, duration, genre, showTimes } = req.body;
-    const movie = new Movie({ title, description, duration, genre, showTimes });
-    await movie.save();
-    res.json({ success: true, movie });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    const response = await axios.request(options);
+    res.json(response.data);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to fetch movie details', error: error.message });
   }
 });
 
-// Booking routes
-app.post('/book', async (req, res) => {
+// Booking API endpoint
+app.post('/api/bookings', async (req, res) => {
+  const { movieId, movieTitle, seats, customerName } = req.body;
+
+  const newBooking = new Booking({
+    movieId,
+    movieTitle,
+    seats,
+    customerName,
+  });
+
   try {
-    const { movieId, userName, email, seats } = req.body;
-    const booking = new Booking({
-      movieId,
-      userName,
-      email,
-      seats,
-      bookingTime: new Date(),
-      movieName,
-    });
-    await booking.save();
-    res.json({ success: true, booking });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    const savedBooking = await newBooking.save();
+    res.status(201).json(savedBooking);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to book movie', error: error.message });
   }
 });
 
-app.get('/bookings', async (req, res) => {
-  try {
-    const bookings = await Booking.find().populate('movieId');
-    res.json(bookings);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// User routes
-app.post('/register', async (req, res) => {
-  try {
-    const { name, email, password } = req.body;
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const user = new User({ name, email, password: hashedPassword });
-    await user.save();
-    res.json({ success: true, user });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-app.post('/login', async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    const user = await User.findOne({ email });
-    if (user && await bcrypt.compare(password, user.password)) {
-      res.json({ success: true, user });
-    } else {
-      res.status(400).json({ error: 'Invalid credentials' });
-    }
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// Start server
-connectDB();
+// Start the server
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
