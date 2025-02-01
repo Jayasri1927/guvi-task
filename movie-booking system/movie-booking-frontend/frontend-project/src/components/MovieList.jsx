@@ -10,7 +10,7 @@ const MovieList = () => {
     const fetchMovies = async () => {
       try {
         // Fetch movies from the backend
-        const res = await axios.get('https://guvi-task-40.onrender.com/api/movies');
+        const res = await axios.get('https://guvi-task-41.onrender.com/api/movies');
         setMovies(res.data); // Store fetched movies in the state
       } catch (error) {
         console.error('Error fetching movies:', error);

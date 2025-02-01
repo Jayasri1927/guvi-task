@@ -10,7 +10,7 @@ const MovieDetail = () => {
   useEffect(() => {
     const fetchMovie = async () => {
       try {
-        const res = await axios.get(`https://guvi-task-40.onrender.com/api/movies/${id}`); // GET movie by ID
+        const res = await axios.get(`https://guvi-task-41.onrender.com/api/movies/${id}`); // GET movie by ID
         setMovie(res.data); // Set the fetched movie details to state
       } catch (error) {
         console.error('Error fetching movie details:', error);

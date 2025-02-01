@@ -7,17 +7,30 @@ const SeatSelection = () => {
   const [seats, setSeats] = useState([]); // State to store seat data
   const [selectedSeats, setSelectedSeats] = useState([]); // State to store selected seats
   const [totalAmount, setTotalAmount] = useState(0); // State to track the total amount
-  const [error, setError] = useState(null); // State to handle errors
   const navigate = useNavigate();
 
+  // Generate fixed seat data (10 seats A1, A2, A3,... A10)
+  const generateSeats = () => {
+    const seatNumbers = [];
+    for (let i = 1; i <= 10; i++) {
+      seatNumbers.push(`A${i}`);
+    }
+    return seatNumbers;
+  };
+
   useEffect(() => {
-    // Fetch seats for the movie
+    // Fetch seats for the movie from backend
     const fetchSeats = async () => {
       try {
-        const response = await axios.get(`https://guvi-task-40.onrender.com/api/movies/${movieId}/seats`);
-        setSeats(response.data); // Store fetched seats in state
+        const response = await axios.get(`https://guvi-task-41.onrender.com/api/movies/${movieId}/seats`);
+        const fetchedSeats = response.data.seats || [];
+        // If backend returns seat data, update the state
+        const seatsWithStatus = generateSeats().map(seat => {
+          const seatData = fetchedSeats.find(s => s.seatNumber === seat);
+          return seatData || { seatNumber: seat, status: 'available' }; // Default to 'available' if no data found
+        });
+        setSeats(seatsWithStatus); // Set the seat data with the status
       } catch (error) {
-        setError('Failed to load seat data. Please try again later.');
         console.error('Error fetching seats:', error);
       }
     };
@@ -48,13 +61,12 @@ const SeatSelection = () => {
   return (
     <div>
       <h2>Select Seats</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>} {/* Display error message */}
       <div>
         {seats.length > 0 ? (
           seats.map((seat) => (
             <button
               key={seat.seatNumber}
-              disabled={seat.status === 'booked'} // Disable booked seats
+              disabled={seat.status === 'booked'}
               onClick={() => {
                 if (selectedSeats.find((s) => s.seatNumber === seat.seatNumber)) {
                   handleSeatDeselect(seat); // Deselect the seat if already selected
@@ -64,10 +76,14 @@ const SeatSelection = () => {
               }}
               style={{
                 backgroundColor:
-                  seat.status === 'booked' ? 'gray' : // Booked seats are gray
-                  selectedSeats.find((s) => s.seatNumber === seat.seatNumber) ? 'green' : 'lightblue', // Selected seats are green
+                  seat.status === 'booked' ? 'gray' :
+                  selectedSeats.find((s) => s.seatNumber === seat.seatNumber) ? 'green' : 'lightblue',
                 margin: '5px',
                 padding: '10px',
+                width: '40px',
+                height: '40px',
+                textAlign: 'center',
+                fontSize: '14px',
               }}
             >
               {seat.seatNumber}
@@ -79,7 +95,7 @@ const SeatSelection = () => {
       </div>
       <div>
         <p>Total: ${totalAmount}</p>
-        <button onClick={handleBooking} disabled={selectedSeats.length === 0}>Book Tickets</button>
+        <button onClick={handleBooking}>Book Tickets</button>
       </div>
     </div>
   );
