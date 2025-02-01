@@ -4,20 +4,26 @@ import { Link } from 'react-router-dom';
 
 const MovieList = () => {
   const [movies, setMovies] = useState([]);
+  const [error, setError] = useState(null); // State to store errors
 
   useEffect(() => {
     const fetchMovies = async () => {
       try {
         // Fetch movies from the backend
-        const res = await axios.get('http://localhost:3000/api/movies');
+        const res = await axios.get('https://guvi-task-40.onrender.com/api/movies');
         setMovies(res.data); // Store fetched movies in the state
       } catch (error) {
         console.error('Error fetching movies:', error);
+        SetError('Failed to load movies. Please try again')
       }
     };
 
     fetchMovies(); // Fetch movies when the component mounts
   }, []);
+
+  if (error) {
+    return <div>{error}</div>; // Show error message if there's an issue
+  }
 
   return (
     <div>

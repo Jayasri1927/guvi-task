@@ -5,14 +5,16 @@ import axios from 'axios';
 const MovieDetail = () => {
   const { id } = useParams(); // Get movie ID from URL
   const [movie, setMovie] = useState(null);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchMovie = async () => {
       try {
-        const res = await axios.get(`http://localhost:3000/api/movies/${id}`); // GET movie by ID
+        const res = await axios.get(`https://guvi-task-40.onrender.com/api/movies/${id}`); // GET movie by ID
         setMovie(res.data); // Set the fetched movie details to state
       } catch (error) {
         console.error('Error fetching movie details:', error);
+        setError('Failed to load movie details.');
       }
     };
 

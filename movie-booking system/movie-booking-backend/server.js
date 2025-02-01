@@ -5,6 +5,7 @@ const connectDB = require('./config/db');
 const movieRoutes = require('./routes/movieRoutes');
 const bookingRoutes = require('./routes/bookingRoutes');
 const userRoutes = require('./routes/userRoutes');
+const seatRoutes = require('./routes/SeatsRoutes');
 
 require('dotenv').config();
 
@@ -27,6 +28,7 @@ connectDB();
 app.use('/api', movieRoutes);
 app.use('/api', bookingRoutes);
 app.use('/api', userRoutes);
+app.use('/api', seatRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
