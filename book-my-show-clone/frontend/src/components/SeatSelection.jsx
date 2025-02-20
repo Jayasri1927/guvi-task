@@ -13,7 +13,7 @@ const SeatSelection = () => {
   useEffect(() => {
     const fetchSeats = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/seats/${movieId}/seats`);
+        const response = await axios.get(`https://guvi-task-43.onrender.com/api/seats/${movieId}/seats`);
         setSeats(response.data);
         setLoading(false);
       } catch (error) {
