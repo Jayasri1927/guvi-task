@@ -21,6 +21,10 @@ const MovieDetail = () => {
     fetchMovie();
   }, [id]);
 
+  if (error) {
+    return <p style={{ color: 'red' }}>⚠ {error}</p>;
+  }
+
   if (!movie) {
     return <p>Loading...</p>;
   }

@@ -10,8 +10,9 @@ const Register = () => {
     e.preventDefault();
 
     try {
-      await axios.post('http://localhost:5000/api/register', { email, password });
+      await axios.post('https://guvi-task-41.onrender.com/api/register', { email, password });
       alert('Registration successful');
+      navigate('/login');
     } catch (error) {
       setErrorMessage('Registration failed');
     }

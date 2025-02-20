@@ -4,7 +4,7 @@ const bookingSchema = new mongoose.Schema({
   user: { type: String, ref: 'User', required: true },
   movie: { type: String, ref: 'Movie', required: true },
   showtime: { type: String, required: true },
-  seats: { type: String},
+  seats: [{ type: String}],
   Price: {type : Number},
   totalAmount: { type: Number, required: true },
 });

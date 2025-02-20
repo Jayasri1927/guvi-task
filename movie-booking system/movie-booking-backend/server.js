@@ -1,6 +1,7 @@
 const express = require('express');
 const session = require('express-session');
 const cors = require('cors');
+// const mongoose = require('mongoose');
 const connectDB = require('./config/db');
 const movieRoutes = require('./routes/movieRoutes');
 const bookingRoutes = require('./routes/bookingRoutes');
@@ -25,10 +26,17 @@ app.use(cors());
 connectDB();
 
 
-app.use('/api', movieRoutes);
-app.use('/api', bookingRoutes);
-app.use('/api', userRoutes);
-app.use('/api', seatRoutes);
+app.use('/api/movies', movieRoutes);
+app.use('/api/bookings', bookingRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/seats', seatRoutes);
+
+app.use('/',(req, res) => {
+  res.send ('Welcome to the Movie Booking API');
+});
+
+console.log("MONGO_URI:", process.env.MONGO_URI);
+
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

@@ -1,20 +1,20 @@
-const Movie = require('../models/movieModel'); // Import the Movie model
+const Movie = require('../models/movieModel');
 
 // Add a new movie
 const addMovie = async (req, res) => {
   try {
     const { title, genre, releaseDate, showtimes } = req.body;
 
-    const movie = new Movie({
-      title,
-      genre,
-      releaseDate,
-      showtimes,
-    });
+    if (!title || !genre || !releaseDate || !showtimes) {
+      return res.status(400).json({ error: 'All fields are required' });
+    }
+
+    const movie = new Movie({ title, genre, releaseDate, showtimes });
 
     await movie.save();
     res.status(201).json({ message: 'Movie added successfully', movie });
   } catch (err) {
+    console.error('Error adding movie:', err);
     res.status(500).json({ error: 'Failed to add movie' });
   }
 };
@@ -22,9 +22,10 @@ const addMovie = async (req, res) => {
 // Fetch all movies
 const getAllMovies = async (req, res) => {
   try {
-    const movies = await Movie.find(); // Fetch all movies from the database
-    res.json(movies); // Return all movies as a JSON response
+    const movies = await Movie.find();
+    res.json(movies);
   } catch (err) {
+    console.error('Error fetching movies:', err);
     res.status(500).json({ error: 'Failed to fetch movies' });
   }
 };
@@ -32,21 +33,15 @@ const getAllMovies = async (req, res) => {
 // Fetch a single movie by ID
 const getMovieById = async (req, res) => {
   try {
-    const movie = await Movie.findById(req.params.id); // Fetch movie by ID
+    const movie = await Movie.findById(req.params.id);
     if (!movie) {
       return res.status(404).json({ error: 'Movie not found' });
     }
-    res.json(movie); // Return the movie as a JSON response
+    res.json(movie);
   } catch (err) {
+    console.error('Error fetching movie:', err);
     res.status(500).json({ error: 'Failed to fetch movie' });
   }
 };
 
-
-
-
-module.exports = {
-  addMovie,
-  getAllMovies,
-  getMovieById,
-};
+module.exports = { addMovie, getAllMovies, getMovieById };

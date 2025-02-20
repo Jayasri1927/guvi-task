@@ -12,7 +12,7 @@ const Login = ({ setUserLoggedIn }) => {
     e.preventDefault();
 
     try {
-      const res = await axios.post('http://localhost:5000/api/login', { email, password });
+      const res = await axios.post('https://guvi-task-41.onrender.com/api/login', { email, password });
       setUserLoggedIn(true);
       navigate('/');
     } catch (error) {

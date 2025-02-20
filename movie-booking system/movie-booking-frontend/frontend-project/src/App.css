@@ -1,0 +1,50 @@
+.seat-container {
+    text-align: center;
+    margin-top: 20px;
+  }
+  
+  .seat-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 50px);
+    gap: 10px;
+    justify-content: center;
+  }
+  
+  .seat-button {
+    width: 50px;
+    height: 50px;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  
+  .seat-button.available {
+    background-color: lightblue;
+  }
+  
+  .seat-button.booked {
+    background-color: gray;
+    cursor: not-allowed;
+  }
+  
+  .seat-button.selected {
+    background-color: green;
+    color: white;
+  }
+  
+  .confirm-btn {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #28a745;
+    color: white;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  
+  .confirm-btn:hover {
+    background-color: #218838;
+  }
+  
