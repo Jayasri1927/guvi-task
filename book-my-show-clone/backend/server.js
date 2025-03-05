@@ -19,10 +19,12 @@ mongoose
 const movieRoutes = require("./routes/movieRoutes");
 const seatRoutes = require("./routes/seatRoutes");
 const bookingRoutes = require("./routes/bookingRoutes");
+const authRoutes = require("./routes/authRoutes");
 
-app.use("/api/movies", movieRoutes);
+app.use("/api/movie", movieRoutes);
 app.use("/api/seats", seatRoutes);
 app.use("/api/bookings", bookingRoutes);
+app.use("/api/auth", authRoutes);
 
 app.get("/", (req, res) => {
     res.send("Backend is Running...");
