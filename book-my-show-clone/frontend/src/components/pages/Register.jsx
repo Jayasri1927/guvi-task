@@ -16,7 +16,7 @@ const Register = () => {
     setLoading(true);
 
     try {
-      await axios.post("http://localhost:5000/api/auth/register", { name, email, password });
+      await axios.post("https://guvi-task-44.onrender.com/api/auth/register", { name, email, password });
       alert("🎉 Registration successful! Please login.");
       navigate("/login");
     } catch (error) {

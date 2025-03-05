@@ -24,7 +24,7 @@ const SeatSelection = () => {
       setError("");
 
       try {
-        const response = await axios.get(`http://localhost:5000/api/seats/${movieId}/seats?date=${date}`);
+        const response = await axios.get(`https://guvi-task-44.onrender.com/api/seats/${movieId}/seats?date=${date}`);
         if (Array.isArray(response.data)) {
           setSeats(response.data);
         } else {
@@ -62,7 +62,7 @@ const SeatSelection = () => {
       return;
     }
     try {
-      await axios.post("http://localhost:5000/api/seats/book", {
+      await axios.post("https://guvi-task-44.onrender.com/api/seats/book", {
         movieId,
         selectedSeats,
         date
