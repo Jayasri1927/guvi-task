@@ -12,7 +12,7 @@ const MovieList = () => {
   useEffect(() => {
     const fetchMovies = async () => {
       try {
-        const response = await axios.get("https://guvi-task-44.onrender.com/api/movie");
+        const response = await axios.get("https://guvi-task-45.onrender.com/api/movie");
         setMovies(response.data);
       } catch (error) {
         console.error("Error fetching movies:", error);

@@ -62,7 +62,7 @@ const SeatSelection = () => {
       return;
     }
     try {
-      await axios.post("https://guvi-task-44.onrender.com/api/seats/book", {
+      await axios.post("https://guvi-task-45.onrender.com/api/seats/book", {
         movieId,
         selectedSeats,
         date
