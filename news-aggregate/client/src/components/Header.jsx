@@ -1,96 +1,169 @@
-import React, { useState, useEffect } from "react";
-import { Link } from 'react-router-dom'
+import React, { useState, useEffect, useRef } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import countries from "./countries";
-import downArrow from './../assets/downarrow.png'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCircleArrowDown } from '@fortawesome/free-solid-svg-icons'
-import axios from 'axios';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCircleArrowDown } from "@fortawesome/free-solid-svg-icons";
 
-
-
-
-function Header() {
-  const [active, setActive] = useState(false);
+function Header({ setIsAuthenticated }) {
   const [showCountryDropdown, setShowCountryDropdown] = useState(false);
   const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
+  const [theme, setTheme] = useState(localStorage.getItem("theme") || "light-theme");
 
-  const [theme, setTheme] = useState("light-theme");
-  let category = ["business", "entertainment", "general", "health", "science", "sports", "technology","politics"]
-  useEffect(() => {
-    document.body.className = theme;
-  }, [theme])
+  const categoryDropdownRef = useRef(null);
+  const countryDropdownRef = useRef(null);
+  const navigate = useNavigate();
+
   function toggleTheme() {
-    if (theme === "light-theme") {
-      setTheme("dark-theme")
-    }
-    else {
-      setTheme("light-theme")
-    }
+    const newTheme = theme === "light-theme" ? "dark-theme" : "light-theme";
+    setTheme(newTheme);
+    localStorage.setItem("theme", newTheme);
+
+    document.body.classList.remove("light-theme", "dark-theme");
+    document.body.classList.add(newTheme);
   }
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("theme") || "light-theme";
+    setTheme(savedTheme);
+    document.body.classList.remove("light-theme", "dark-theme");
+    document.body.classList.add(savedTheme);
+}, []);
+
+
+  const handleLogout = () => {
+    localStorage.removeItem("isAuthenticated");
+    setIsAuthenticated(false);
+    navigate("/login");
+  };
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (
+        categoryDropdownRef.current &&
+        !categoryDropdownRef.current.contains(event.target)
+      ) {
+        setShowCategoryDropdown(false);
+      }
+      if (
+        countryDropdownRef.current &&
+        !countryDropdownRef.current.contains(event.target)
+      ) {
+        setShowCountryDropdown(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
-    <header className="">
-     <nav class="fixed top-0 left-0 w-full h-auto bg-gray-800 z-10 flex items-center justify-around">
-      
-      <h3 class="relative heading font-bold md:basis-1/6 text-2xl xs:basis-4/12 z-50 mb-5 mt-5">News_Aggregator</h3>
+    <header>
+      <nav className="fixed top-0 left-0 w-full h-auto bg-gray-800 z-10 flex items-center justify-around p-4">
+        <h3 className="text-white font-bold text-2xl">News Aggregator</h3>
 
-        <ul className={active ? "nav-ul flex gap-11 md:gap-14 xs:gap-12 lg:basis-3/6 md:basis-4/6 md:justify-end active" : " nav-ul flex gap-14 lg:basis-3/6 md:basis-4/6 justify-end"}>
-          <li><Link className="no-underline font-semibold" to="/" onClick={() => { setActive(!active) }}>All News</Link></li>
-          <li className="dropdown-li"><Link className="no-underline font-semibold flex items-center gap-2" onClick={() => { setShowCategoryDropdown(!showCategoryDropdown); setShowCountryDropdown(false) }}>Top-Headlines <FontAwesomeIcon className={showCategoryDropdown ? "down-arrow-icon down-arrow-icon-active" : "down-arrow-icon"} icon={faCircleArrowDown} /></Link>
-
-            <ul className={showCategoryDropdown ? "dropdown p-2 show-dropdown" : "dropdown p-2"}>
-              {category.map((element, index) => {
-                return (
-                  <li key={index} onClick={() => { setShowCategoryDropdown(!showCategoryDropdown) }}>
-
-                    <Link to={"/top-headlines/" + element} className="flex gap-3 capitalize" type="btn"
-                      onClick={() => {
-                        setActive(!active)
-                      }}>
-                      {element}
-                    </Link>
-                  </li>
-                )
-              })}
-            </ul>
+        <ul className="flex gap-8 justify-end">
+          <li>
+            <Link className="no-underline text-white font-semibold" to="/">
+              All News
+            </Link>
           </li>
-          <li className="dropdown-li"><Link className="no-underline font-semibold flex items-center gap-2" onClick={() => { setShowCountryDropdown(!showCountryDropdown); setShowCategoryDropdown(false) }}>Country <FontAwesomeIcon className={showCountryDropdown ? "down-arrow-icon down-arrow-icon-active" : "down-arrow-icon"} icon={faCircleArrowDown} /></Link>
-            <ul className={showCountryDropdown ? "dropdown p-2 show-dropdown" : "dropdown p-2"}>
-              {countries.map((element, index) => {
-                return (
-                  <li key={index} onClick={() => { setShowCountryDropdown(!showCountryDropdown) }}>
-                    <Link to={"/country/" + element?.iso_2_alpha} className="flex gap-3" type="btn"
-                      onClick={() => {
-                        setActive(!active)
-                      }}>
+
+          {/* Top Headlines Dropdown */}
+          <li className="relative" ref={categoryDropdownRef}>
+            <button
+              className="text-white font-semibold flex items-center gap-2"
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowCategoryDropdown((prev) => !prev);
+                setShowCountryDropdown(false); // Close other dropdown
+              }}
+            >
+              Top Headlines <FontAwesomeIcon icon={faCircleArrowDown} />
+            </button>
+
+            {showCategoryDropdown && (
+              <ul className="absolute bg-white shadow-lg p-2 w-40">
+                {["business", "entertainment", "general", "health", "science", "sports", "technology", "politics"].map(
+                  (category, index) => (
+                    <li key={index}>
+                      <Link
+                        to={`/top-headlines/${category}`}
+                        className="block px-4 py-2 capitalize text-black hover:bg-gray-200"
+                        onClick={() => setShowCategoryDropdown(false)}
+                      >
+                        {category}
+                      </Link>
+                    </li>
+                  )
+                )}
+              </ul>
+            )}
+          </li>
+
+          {/* Country Dropdown */}
+          <li className="relative" ref={countryDropdownRef}>
+            <button
+              className="text-white font-semibold flex items-center gap-2"
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowCountryDropdown((prev) => !prev);
+                setShowCategoryDropdown(false); // Close other dropdown
+              }}
+            >
+              Country <FontAwesomeIcon icon={faCircleArrowDown} />
+            </button>
+
+            {showCountryDropdown && (
+              <ul className="absolute bg-white shadow-lg p-2 w-40 max-h-60 overflow-y-auto">
+                {countries.map((country, index) => (
+                  <li key={index}>
+                    <Link
+                      to={`/country/${country?.iso_2_alpha}`}
+                      className="flex items-center px-4 py-2 text-black hover:bg-gray-200"
+                      onClick={() => setShowCountryDropdown(false)}
+                    >
                       <img
-                        src={element?.png}
-                        srcset={`https://flagcdn.com/32x24/${element?.iso_2_alpha}.png 2x`}
-                   
-                        alt={element?.countryName} />
-                      <span>{element?.countryName}</span>
+                        src={`https://flagcdn.com/32x24/${country?.iso_2_alpha}.png`}
+                        alt={country?.countryName}
+                        className="w-6 h-4 mr-2"
+                      />
+                      {country?.countryName}
                     </Link>
                   </li>
-                )
-              })}
-            </ul>
+                ))}
+              </ul>
+            )}
           </li>
-          <li><Link className="no-underline font-semibold" to="#" onClick={() => { toggleTheme() }}>
-      
-          <input type="checkbox" class="checkbox" id="checkbox"/>
-             <label for="checkbox" class="checkbox-label">
-          <i class="fas fa-moon"></i>
-          <i class="fas fa-sun"></i>
-          <span class="ball"></span>
-          </label>
-          
 
-          </Link></li>
+          {/* Favorites, Read Later */}
+          <li>
+            <Link className="no-underline font-semibold text-white" to="/favorites">
+              Favorites
+            </Link>
+          </li>
+
+          <li>
+            <Link className="no-underline font-semibold text-white" to="/read-later">
+              Read Later
+            </Link>
+          </li>
+
+          {/* Theme Toggle */}
+          <li>
+            <button onClick={toggleTheme} className="text-white font-semibold flex items-center gap-2">
+              {theme === "light-theme" ? "🌞 Light Mode" : "🌙 Dark Mode"}
+            </button>
+          </li>
+
+          {/* Logout Button */}
+          <li>
+            <button onClick={handleLogout} className="bg-red-600 text-white px-3 py-1 rounded-md hover:bg-red-700">
+              Logout
+            </button>
+          </li>
         </ul>
-        <div className={active ? "ham-burger z-index-100 ham-open" : "ham-burger z-index-100"} onClick={() => { setActive(!active) }}>
-          <span className="lines line-1"></span>
-          <span className="lines line-2"></span>
-          <span className="lines line-3"></span>
-        </div>
       </nav>
     </header>
   );

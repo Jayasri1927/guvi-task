@@ -1,86 +1,93 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from 'react-router-dom'
-import EverythingCard from './EverythingCard'
+import EverythingCard from "./EverythingCard";
 import Loader from "./Loader";
 
 function TopHeadlines() {
-  const params = useParams();
-  const [data, setData] = useState([]);
-  const [page, setPage] = useState(1);
-  const [totalResults, setTotalResults] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
+  const [data, setData] = useState([]); // Default empty array
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  function handlePrev() {
-    setPage(page - 1);
-  }
-
-  function handleNext() {
-    setPage(page + 1);
-  }
-
-  let pageSize = 6;
+  const [page, setPage] = useState(1);
+  const pageSize = 12;
 
   useEffect(() => {
     setIsLoading(true);
     setError(null);
-    const categoryParam = params.category ? `&category=${params.category}` : "";
-    fetch(`https://news-aggregator-dusky.vercel.app/top-headlines?language=en${categoryParam}&page=${page}&pageSize=${pageSize}`)
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
-        }
-        throw new Error('Network response was not ok');
-      })
+
+    fetch(`http://localhost:5000/all-news?page=${page}&pageSize=${pageSize}`)
+      .then((response) => response.json())
       .then((json) => {
-        if (json.success) {
-          setTotalResults(json.data.totalResults);
-          setData(json.data.articles);
+       
+
+        if (json.success && Array.isArray(json.articles)) {
+          setData(json.articles); // ✅ Corrected: `json.articles` instead of `json.data.articles`
         } else {
-          setError(json.message || 'An error occurred');
+          setError(json.message || "Failed to fetch news.");
+          setData([]);
         }
       })
       .catch((error) => {
-        console.error('Fetch error:', error);
-        setError('Failed to fetch news. Please try again later.');
+        console.error("Fetch error:", error);
+        setError("Failed to fetch news.");
+        setData([]);
       })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  }, [page, params.category]);
+      .finally(() => setIsLoading(false));
+  }, [page]);
+
+  // ✅ Debugging: Check if `data` updates correctly
+  // useEffect(() => {
+  //   console.log("📌 Updated data:", data);
+  // }, [data]);
 
   return (
     <>
       {error && <div className="text-red-500 mb-4">{error}</div>}
-      <div className='my-10 cards grid lg:place-content-center md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 xs:grid-cols-1 xs:gap-4 md:gap-10 lg:gap-14 md:px-16 xs:p-3 '>
-        {!isLoading ? (
-          data.length > 0 ? (
-            data.map((element, index) => (
+      {isLoading && <Loader />}
+
+      <div className="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-6 p-5">
+        {data.length > 0 ? (
+          data.map((article, index) => {
+            console.log("📰 Rendering Article:", article); // ✅ Ensure articles are being rendered
+
+            return (
               <EverythingCard
                 key={index}
-                title={element.title}
-                description={element.description}
-                imgUrl={element.urlToImage}
-                publishedAt={element.publishedAt}
-                url={element.url}
-                author={element.author}
-                source={element.source.name}
+                title={article.title || "No Title Available"}
+                description={article.description || "No Description Available"}
+                imgUrl={article.urlToImage || "/default-news.jpg"} // Fallback image
+                publishedAt={
+                  article.publishedAt
+                    ? new Date(article.publishedAt).toLocaleDateString()
+                    : "Unknown Date"
+                }
+                url={article.url}
+                author={article.author || "Unknown"}
+                source={article.source?.name || "Unknown Source"}
               />
-            ))
-          ) : (
-            <p>No articles found for this category or criteria.</p>
-          )
+            );
+          })
         ) : (
-          <Loader />
+          !isLoading && <p>No articles found.</p>
         )}
       </div>
-      {!isLoading && data.length > 0 && (
-        <div className="pagination flex justify-center gap-14 my-10 items-center">
-          <button disabled={page <= 1} className='pagination-btn' onClick={handlePrev}>Prev</button>
-          <p className='font-semibold opacity-80'>{page} of {Math.ceil(totalResults / pageSize)}</p>
-          <button className='pagination-btn' disabled={page >= Math.ceil(totalResults / pageSize)} onClick={handleNext}>Next</button>
-        </div>
-      )}
+
+      {/* ✅ Pagination Buttons */}
+      <div className="flex justify-center mt-4 mb-20">
+        <button
+          onClick={() => setPage(page - 1)}
+          disabled={page === 1}
+          className={`px-4 py-2 mx-2 bg-blue-500 text-white rounded ${
+            page === 1 ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-600"
+          }`}
+        >
+          Previous
+        </button>
+        <button
+          onClick={() => setPage(page + 1)}
+          className="px-4 py-2 mx-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+        >
+          Next
+        </button>
+      </div>
     </>
   );
 }

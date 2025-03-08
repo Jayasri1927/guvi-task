@@ -3,3 +3,59 @@
     padding : 0; 
     box-sizing: border-box;
 }
+
+.everything-card {
+    max-width: 400px; /* Prevents overly wide cards */
+  }
+  
+  .everything-card h2 {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .everything-card p {
+    font-size: 0.9rem;
+    color: #555;
+  }
+  
+  .everything-card-img img {
+    max-height: 160px; /* Reduced height */
+    width: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+  
+  
+  button {
+    transition: background-color 0.3s ease-in-out;
+  }
+
+  /* Ensure the footer stays at the bottom */
+/* .footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: #1f2937; 
+  color: white;
+  text-align: center;
+  padding: 12px 0;
+  font-size: 14px;
+  font-weight: 500;
+  z-index: 10; 
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
+} */
+
+/* Ensure the page content does not overlap the footer */
+/* body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+} */
+
+/* #root {
+  flex: 1;
+  padding-bottom: 50px;  */
+
+  

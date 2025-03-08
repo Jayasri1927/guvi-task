@@ -1,85 +1,87 @@
 import React from "react";
+import { useFavorites } from "../context/FavoritesContext";
+import { useReadLater } from "../context/ReadLaterContext";
 
-function Card(props) {
+function EverythingCard(props) {
+  const { favorites, toggleFavorite } = useFavorites();
+  const { readLater, addToReadLater, removeFromReadLater } = useReadLater();
+
+  const isFavorite = favorites.some((article) => article.url === props.url);
+  const isReadLater = readLater.some((article) => article.url === props.url);
+
   return (
-    <div className="everything-card mt-10">
-      <div className="everything-card flex flex-wrap p-5 gap-1 mb-1">
-        <b className="title">{props.title}</b>
-        <div className="everything-card-img mx-auto">
-          <img className="everything-card-img" src={props.imgUrl} alt="img" />
-        </div>
-        <div className="description">
-          <p className="description-text leading-7">
-            {props.description?.substring(0, 200)}
-          </p>
-        </div>
-        <div className="info">
-          <div className="source-info flex items-center gap-2">
-            <span className="font-semibold">Source:</span>
-            <a
-              href={props.url}
-              target="_blank"
-              className="link underline break-words"
-            >
-              {props.source.substring(0, 70)}
-            </a>
-          </div>
-          <div className="origin flex flex-col">
-            <p className="origin-item">
-              <span className="font-semibold">Author:</span>
-              {props.author}
-            </p>
-            <p className="origin-item">
-              <span className="font-semibold">Published At:</span>
-              ({props.publishedAt})
-            </p>
-          </div>
-        </div>
+    <div className="everything-card mt-5 p-5 border rounded-lg shadow-md bg-white dark:bg-gray-900">
+      <h2 className="text-lg md:text-xl font-semibold text-gray-700 dark:text-white leading-tight">
+        {props.title}
+      </h2>
+
+      <div className="everything-card-img my-3">
+        {props.imgUrl && (
+          <img className="rounded-lg w-full h-40 object-cover" src={props.imgUrl} alt="News" />
+        )}
       </div>
 
-      {/* Added the new card content with styles */}
-      <div className="flex lg:flex-row">
-        <div
-          className="h-48 lg:h-auto lg:w-48 flex-none bg-cover rounded-t lg:rounded-t-none lg:rounded-l text-center overflow-hidden"
-          style={{ backgroundImage: `url(${props.imageUrlLeft})` }}
-          title={props.imageLeftTitle}
-        ></div>
-        <div className="border rounded-b lg:rounded-b-none lg:rounded-r p-4 flex flex-col justify-between leading-normal">
-          <div className="mb-8">
-            <p className="text-sm text-gray-600 flex items-center">
-              {props.memberIcon && (
-                <svg
-                  className="fill-current text-gray-500 w-3 h-3 mr-2"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                >
-                  {props.memberIcon}
-                </svg>
-              )}
-              {props.memberText}
-            </p>
-            <div className="text-gray-900 font-bold text-xl mb-2">
-              {props.cardTitle}
-            </div>
-            <p className="text-gray-700 text-base">{props.cardDescription}</p>
-          </div>
-          <div className="flex items-center">
-            {props.authorImage && (
-              <img
-                className="w-10 h-10 rounded-full mr-4"
-                src={props.authorImage}
-                alt="Avatar"
-              />
-            )}
-            <div className="text-sm">
-              <p className="text-gray-900 leading-none">{props.authorName}</p>
-              <p className="text-gray-600">{props.publishedDate}</p>
-            </div>
-          </div>
-        </div>
+      <p className="text-sm md:text-base text-gray-600 dark:text-gray-300 leading-relaxed">
+        {props.description?.substring(0, 150)}...
+      </p>
+
+      <div className="info mt-2 text-xs md:text-sm text-gray-600 dark:text-gray-400">
+        <p>
+          <strong>Source:</strong>{" "}
+          <a href={props.url} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
+            {props.source}
+          </a>
+        </p>
+        <p><strong>Author:</strong> {props.author || "Unknown"}</p>
+        <p><strong>Published At:</strong> {props.publishedAt}</p>
+      </div>
+
+      {/* Buttons for Favorites and Read Later */}
+      <div className="mt-3 flex flex-wrap justify-between gap-2">
+        {/* Favorites Button */}
+        <button
+          className={`px-4 py-2 text-sm font-medium border rounded-md flex-1 ${
+            isFavorite ? "bg-red-500 text-white hover:bg-red-600" : "bg-gray-200 text-black hover:bg-gray-300"
+          }`}
+          onClick={() => toggleFavorite({
+            title: props.title,
+            description: props.description,
+            imgUrl: props.imgUrl,
+            url: props.url,
+            source: props.source,
+            author: props.author,
+            publishedAt: props.publishedAt,
+          })}
+        >
+          {isFavorite ? "Remove from Favorites" : "❤️ Add to Favorites"}
+        </button>
+
+        {/* Read Later Button */}
+        <button
+          className={`px-4 py-2 text-sm font-medium border rounded-md flex-1 ${
+            isReadLater ? "bg-blue-500 text-white hover:bg-blue-600" : "bg-gray-200 text-black hover:bg-gray-300"
+          }`}
+          onClick={() => {
+            if (isReadLater) {
+              removeFromReadLater(props.url);
+            } else {
+              addToReadLater({
+                title: props.title,
+                description: props.description,
+                imgUrl: props.imgUrl,
+                url: props.url,
+                source: props.source,
+                author: props.author,
+                publishedAt: props.publishedAt,
+              });
+            }
+          }}
+        >
+          {isReadLater ? "❌ Remove from Read Later" : "📌 Save to Read Later"}
+        </button>
       </div>
     </div>
   );
 }
 
-export default Card;
+export default EverythingCard;

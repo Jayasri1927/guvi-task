@@ -6,7 +6,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    color: var(--txt);
+   
 }
 
 html, body {
@@ -15,31 +15,68 @@ html, body {
 }
 
 .light-theme {
-    --background: url("https://tailwindcss.com/_next/static/media/hero@75.b2469a49.jpg");
-    --primary: #F8FAFC;
-    --secondary: #0F172A;
-    --txt: #000;
-    --heading: #2dd9fe;
-    --btn-color: #fff;
-    --btn-background: #5f99be;
-    --search-background: #000;
-    --c: #2dd9fe;
-    --hover_bg_change: backdrop-filter:6px;
+    background: url("https://tailwindcss.com/_next/static/media/hero@75.b2469a49.jpg") no-repeat center center/cover;
+    color: black;
+    transition: 0.5s ease-in-out;
 }
 
 .dark-theme {
-    --background: url("https://tailwindcss.com/_next/static/media/hero-dark@90.dba36cdf.jpg");
+    /* --background: url("https://tailwindcss.com/_next/static/media/hero-dark@90.dba36cdf.jpg");
     --primary: rgb(30,41,59);
     --secondary: #D5DDF0;
     --txt: #fff;
     --heading: #4666FF;
     --btn-color: #000;
     --btn-background: #5f99be;
-    --search-background: #18181b;
+    --search-background: #18181b; */
+    background-color: #1e1e1e !important;
+    color: white !important;
+    transition: 0.5s ease-in-out;
 }
 
+  
+  /* Ensure all text elements turn white in dark mode */
+  .dark-theme h1, 
+  .dark-theme h2, 
+  .dark-theme h3, 
+  .dark-theme h4, 
+  .dark-theme h5, 
+  .dark-theme h6, 
+  .dark-theme p, 
+  .dark-theme span, 
+  .dark-theme a {
+    color: white !important;
+  }
+
+  .dark-theme nav {
+    background: #222 !important;
+    border-bottom: 1px solid #444;
+}
+  
+  /* Adjust links for better visibility */
+  .dark-theme a {
+    color: white; /* Light blue color */
+  }
+  
+  /* Ensure dropdown is visible in dark mode */
+.dark-theme ul li ul {
+    background: #2b2b2b; /* Dark background */
+    color: white; /* White text */
+    border: 1px solid #555; /* Optional border for visibility */
+}
+
+.dark-theme ul li ul li a {
+    color: white !important;
+}
+
+.dark-theme ul li ul li a:hover {
+    background: #444; /* Slightly lighter background */
+}
+
+
+
 body {
-    background: var(--background);
+    background-color: white !important;
     background-size: cover;
     background-position: center;
     min-height: 100vh;
@@ -52,6 +89,8 @@ body {
 
 nav {
     height: 70px;
+    position: relative;  /* ✅ Ensures child dropdowns are positioned correctly */
+    overflow: visible !important; 
     backdrop-filter: blur(4px);
     border-bottom: 0.1px solid grey;
 }
@@ -69,12 +108,16 @@ nav ul {
 }
 
 ul li ul {
-    visibility: hidden;
-    opacity: 0;
     position: absolute;
     left: 0;
-    display: none;
-    background: var(--primary);
+    top: 30px;
+    background: white;
+    display: block !important;  /* Force show dropdown */
+    visibility: visible !important;
+    opacity: 1 !important;
+    min-width: 250px;
+    z-index: 1000;
+    border: 1px solid red;
 }
 
 .show-dropdown {
@@ -84,6 +127,7 @@ ul li ul {
     min-width: 250px;
     text-align: left;
     padding-top: 20px;
+    border: 2px solid red;
     box-shadow: 0px 3px 5px -1px var(--heading);
 }
 
@@ -257,8 +301,8 @@ ul li ul li a:hover {
 }
 
 footer {
-    color: var(--btn-color);
-    background: var(--heading);
+    color: white;
+    background: gray;
 }
 
 /* Loader */
@@ -360,4 +404,176 @@ footer {
 img {
     max-width: 100%;
     height: auto;
+}
+
+/* General Styles */
+.register-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background: linear-gradient(to right, #38a169, #319795, #3182ce);
+  }
+  
+  .register-box {
+    background: #ffffff;
+    color: #333;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+    width: 350px;
+    text-align: center;
+  }
+  
+  /* Input Fields */
+  .register-box input {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    color: #000;
+    background: #fff;
+  }
+  
+  /* Input Fields in Dark Mode */
+  @media (prefers-color-scheme: dark) {
+    .register-box {
+      background: #222;
+      color: #fff;
+    }
+  
+    .register-box input {
+      background: #333;
+      border: 1px solid #555;
+      color: #fff;
+    }
+  
+    .register-box input::placeholder {
+      color: #bbb;
+    }
+  }
+  
+  /* Register Button */
+  .register-box button {
+    width: 100%;
+    padding: 12px;
+    background: #28a745;
+    color: white;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  
+  .register-box button:hover {
+    background: #218838;
+  }
+  
+ /* General Styles */
+.login-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background: linear-gradient(to right, #3b82f6, #9333ea, #4f46e5);
+}
+
+.login-box {
+    background: #ffffff;
+    color: #333;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+    width: 350px;
+    text-align: center;
+}
+
+/* Welcome Back & New User Text */
+h2 {
+    font-size: 24px;
+    font-weight: bold;
+    color: black !important;  /* Ensures visibility */
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.login-text {
+    font-size: 16px;
+    color: black !important;
+    text-align: center;
+    margin-top: 10px;
+}
+
+.login-text a {
+    color: blue !important;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.login-text a:hover {
+    text-decoration: underline;
+}
+
+/* Input Fields */
+.login-form input {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    color: #000;
+    background: #fff;
+}
+
+.login-form input:focus {
+    border-color: #3b82f6;
+    outline: none;
+    box-shadow: 0 0 5px rgba(59, 130, 246, 0.5);
+}
+
+/* Login Button */
+.login-button {
+    width: 100%;
+    padding: 12px;
+    background: #2563eb;
+    color: white;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.login-button:hover {
+    background: #1e40af;
+}
+
+/* Dark Mode */
+@media (prefers-color-scheme: dark) {
+    .login-box {
+        background: #222;
+        color: #fff;
+    }
+
+    .login-form input {
+        background: #333;
+        border: 1px solid #555;
+        color: #fff;
+    }
+
+    .login-form input::placeholder {
+        color: #bbb;
+    }
+
+    .login-text {
+        color: white !important;
+    }
+
+    .login-text a {
+        color: #3b82f6 !important;
+    }
 }
